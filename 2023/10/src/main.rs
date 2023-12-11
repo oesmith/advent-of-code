@@ -53,7 +53,6 @@ impl Field {
         let mut count = 0;
 
         let mut is_inside = false;
-        let mut last_seen_corner = '.';
 
         for y in 0..self.height {
             for x in 0..self.width {
@@ -65,19 +64,8 @@ impl Field {
                     tile = '.'; // Treat disconnected pipes as spaces.
                 }
                 match tile {
-                    '-' => (),
-                    '|' => is_inside = !is_inside,
-                    'F' | 'L' => last_seen_corner = tile,
-                    'J' => {
-                        if last_seen_corner == 'F' {
-                            is_inside = !is_inside
-                        }
-                    }
-                    '7' => {
-                        if last_seen_corner == 'L' {
-                            is_inside = !is_inside
-                        }
-                    }
+                    '-' | 'F' | '7' => (),
+                    '|' | 'L' | 'J' => is_inside = !is_inside,
                     '.' => {
                         if is_inside {
                             count += 1
