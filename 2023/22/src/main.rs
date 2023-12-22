@@ -64,7 +64,7 @@ impl<'a> Brick {
 }
 
 struct Stack {
-    bricks: Vec<Brick>,
+    count: usize,
     above: HashMap<usize, HashSet<usize>>,
     below: HashMap<usize, HashSet<usize>>,
 }
@@ -117,14 +117,14 @@ impl Stack {
             below.insert(i, down);
         }
         Stack {
-            bricks,
+            count: bricks.len(),
             above,
             below,
         }
     }
 
     fn num_can_disintegrate(&self) -> usize {
-        (0..self.bricks.len())
+        (0..self.count)
             .filter(|i| {
                 self.above
                     .get(i)
@@ -160,7 +160,7 @@ impl Stack {
     }
 
     fn max_fall_after_single_disintegration(&self) -> usize {
-        (0..self.bricks.len())
+        (0..self.count)
             .filter(|i| {
                 self.above
                     .get(i)
