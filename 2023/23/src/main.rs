@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, VecDeque};
 
 struct Map {
     tiles: Vec<Vec<char>>,
@@ -100,7 +100,7 @@ impl Map {
                 } else {
                     let neighbours = self.neighbours(cur, dir);
                     for next in neighbours.iter().filter(|nb| **nb != prev) {
-                        queue.push_back((cur, *next, len+1));
+                        queue.push_back((cur, *next, len + 1));
                     }
                 }
             }
@@ -109,32 +109,15 @@ impl Map {
 
         let mut complete = Vec::new();
         let mut queue = VecDeque::new();
-        let mut initial = HashSet::new();
-        initial.insert(0);
-        queue.push_back((0, initial, 0));
-
-        while let Some((node, mut visited, len)) = queue.pop_front() {
+        queue.push_back((0, 1 as u64, 0));
+        while let Some((node, visited, len)) = queue.pop_front() {
             if node == 1 {
                 complete.push(len);
                 continue;
             }
-
             let neighbours = edges.get(&node).unwrap();
-            let next = neighbours
-                .iter()
-                .filter(|p| !visited.contains(p.0))
-                .collect::<Vec<_>>();
-
-            if next.len() > 1 {
-                for edge in next[1..].iter() {
-                    let mut nv = visited.clone();
-                    nv.insert(*edge.0);
-                    queue.push_back((*edge.0, nv, len+edge.1));
-                }
-            }
-            if next.len() > 0 {
-                visited.insert(*next[0].0);
-                queue.push_back((*next[0].0, visited, len+next[0].1));
+            for edge in neighbours.iter().filter(|p| visited & (1 << p.0) == 0) {
+                queue.push_back((*edge.0, visited + (1 << edge.0), len + edge.1));
             }
         }
 
